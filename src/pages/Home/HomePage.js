@@ -5,6 +5,7 @@ import PicsApiService from 'services/apiService';
 import { Button } from 'components/Button/Button';
 import { useLocation } from 'react-router';
 import styles from 'pages/Home/HomePage.module.css';
+import Spiner from 'components/Loader/Loader';
 
 const newPicsApiService = new PicsApiService();
 
@@ -12,6 +13,7 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState([]);
   const [pages, setPages] = useState(null);
   const [page, setPage] = useState(null);
+  const [showSpiner, setShowSpiner] = useState(false);
 
   const location = useLocation();
 
@@ -19,39 +21,40 @@ export default function HomePage() {
     if (searchResults.length !== 0) {
       return;
     }
+    setShowSpiner(true);
+
     newPicsApiService
       .fetchTrendingFilms()
       .then(result => {
         setSearchResults(result.results);
         setPages(result.total_pages);
         setPage(result.page);
+        setShowSpiner(false);
       })
       .catch(error => {});
-  });
+  }, [searchResults.length]);
 
   const handleOnClick = e => {
+    setShowSpiner(true);
     newPicsApiService.incrementPage();
-    // setShowSpiner(true);
     newPicsApiService
       .fetchTrendingFilms()
       .then(result => {
         setSearchResults(prevState => [...prevState, ...result.results]);
-        // setShowSpiner(false);
         setPages(result.total_pages);
         setPage(result.page);
-        // setStatus('success');
+        setShowSpiner(false);
         window.scrollTo({
           top: document.documentElement.scrollHeight,
           behavior: 'smooth',
         });
       })
-      .catch(error => {
-        // setStatus('error');
-      });
+      .catch(error => {});
   };
 
   return (
     <>
+      {showSpiner && <Spiner />}
       {searchResults.length > 0 && (
         <ul className={styles.MoviesGallery}>
           {searchResults.map((searchResult, index) => (

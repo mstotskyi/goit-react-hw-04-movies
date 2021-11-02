@@ -36,8 +36,12 @@ export default function MovieDetails() {
 
   return (
     <div className={styles.container}>
-      <button type="button" onClick={handleOnClick}>
-        Go back
+      <button
+        type="button"
+        onClick={handleOnClick}
+        className={styles.GoBackBtn}
+      >
+        {location?.state?.from?.label ?? 'Go back'}
       </button>
       <div className={styles.MovieDetails}>
         {movie.poster_path ? (

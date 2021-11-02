@@ -5,8 +5,6 @@ import { Route } from 'react-router';
 import Navigation from 'components/Navigation/Navigation';
 import Loader from 'components/Loader/Loader';
 
-// const Navigation = lazy(() => import('./components/Navigation/Navigation.js'));
-
 const HomePage = lazy(() =>
   import('./pages/Home/HomePage.js' /*webpackChunkName: "HomePage"*/),
 );
