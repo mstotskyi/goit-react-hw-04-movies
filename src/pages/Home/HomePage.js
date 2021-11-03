@@ -1,17 +1,18 @@
-// import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import PicsApiService from 'services/apiService';
 import { useLocation } from 'react-router';
-import { MoviesGallery } from 'components/MoviesGallery/MoviesGallery';
-
+import defaultImg from '../../images/default.jpg';
+import { Button } from 'components/Button/Button';
 import Spiner from 'components/Loader/Loader';
+import styles from 'pages/Home/HomePage.module.css';
 
 const newPicsApiService = new PicsApiService();
 
 export default function HomePage() {
   const [searchResults, setSearchResults] = useState([]);
   const { url } = useRouteMatch();
+  const BASE_IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
   const [pages, setPages] = useState(null);
   const [page, setPage] = useState(null);
@@ -58,14 +59,49 @@ export default function HomePage() {
     <>
       {showSpiner && <Spiner />}
       {searchResults.length > 0 && (
-        <MoviesGallery
-          searchResults={searchResults}
-          url={url}
-          location={location}
-          handleOnClick={handleOnClick}
-          page={page}
-          pages={pages}
-        />
+        <>
+          <ul className={styles.MoviesGallery}>
+            {searchResults.map((searchResult, index) => (
+              <li key={index}>
+                <Link
+                  to={{
+                    pathname: `/movies/${searchResult.id}`,
+                    state: {
+                      from: { location, label: `Back to results` },
+                    },
+                  }}
+                  className={styles.link}
+                >
+                  <div>
+                    {searchResult.poster_path ? (
+                      <div className={styles.ImageThumb}>
+                        <img
+                          src={`${BASE_IMG_URL}${searchResult.poster_path}`}
+                          alt={`${searchResult.title}`}
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <img
+                          src={`${defaultImg}`}
+                          alt={`${searchResult.title}`}
+                        />
+                      </div>
+                    )}
+                    {searchResult.title ? (
+                      <p>{searchResult.title}</p>
+                    ) : (
+                      searchResult.original_title
+                    )}
+
+                    <p>Rating {searchResult.vote_average}</p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {page !== pages && <Button handleOnClick={handleOnClick} />}
+        </>
       )}
     </>
   );

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router';
 import PicsApiService from 'services/apiService';
 import { Searchbar } from 'components/Searchbar/Searchbar';
 import Spiner from 'components/Loader/Loader';
-import { MoviesGallery } from 'components/MoviesGallery/MoviesGallery';
+import defaultImg from '../../images/default.jpg';
+import { Button } from 'components/Button/Button';
+import styles from 'pages/Movies/MoviesPage.module.css';
 
 const newPicsApiService = new PicsApiService();
 
@@ -17,6 +19,7 @@ export default function MoviesPage() {
   const [pages, setPages] = useState(null);
   const [page, setPage] = useState(null);
   const [showSpiner, setShowSpiner] = useState(false);
+  const BASE_IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
   const getSearchQuery = searchQuery => {
     history.push({ ...location, search: `query=${searchQuery}` });
@@ -82,14 +85,49 @@ export default function MoviesPage() {
         <Searchbar getSearchQuery={getSearchQuery} />
         {showSpiner && <Spiner />}
         {searchResults.length > 0 ? (
-          <MoviesGallery
-            searchResults={searchResults}
-            url={url}
-            location={location}
-            handleOnClick={handleOnClick}
-            page={page}
-            pages={pages}
-          />
+          <>
+            <ul className={styles.MoviesGallery}>
+              {searchResults.map((searchResult, index) => (
+                <li key={index}>
+                  <Link
+                    to={{
+                      pathname: `${url}/${searchResult.id}`,
+                      state: {
+                        from: { location, label: `Back to results` },
+                      },
+                    }}
+                    className={styles.link}
+                  >
+                    <div>
+                      {searchResult.poster_path ? (
+                        <div className={styles.ImageThumb}>
+                          <img
+                            src={`${BASE_IMG_URL}${searchResult.poster_path}`}
+                            alt={`${searchResult.title}`}
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <img
+                            src={`${defaultImg}`}
+                            alt={`${searchResult.title}`}
+                          />
+                        </div>
+                      )}
+                      {searchResult.title ? (
+                        <p>{searchResult.title}</p>
+                      ) : (
+                        searchResult.original_title
+                      )}
+
+                      <p>Rating {searchResult.vote_average}</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {page !== pages && <Button handleOnClick={handleOnClick} />}
+          </>
         ) : (
           <p>Sorry, nothing was found for your query!</p>
         )}
