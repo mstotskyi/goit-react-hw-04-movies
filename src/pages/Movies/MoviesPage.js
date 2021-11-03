@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router';
 import PicsApiService from 'services/apiService';
 import { Searchbar } from 'components/Searchbar/Searchbar';
-import { Button } from 'components/Button/Button';
 import Spiner from 'components/Loader/Loader';
-import styles from 'pages/Movies/MoviesPage.module.css';
+import { MoviesGallery } from 'components/MoviesGallery/MoviesGallery';
 
 const newPicsApiService = new PicsApiService();
 
@@ -51,6 +50,7 @@ export default function MoviesPage() {
       .fetchSearchMovies()
       .then(result => {
         setSearchResults(prevState => [...prevState, ...result.results]);
+        console.log(result);
         setShowSpiner(false);
         setPages(result.total_pages);
         setPage(result.page);
@@ -82,26 +82,14 @@ export default function MoviesPage() {
         <Searchbar getSearchQuery={getSearchQuery} />
         {showSpiner && <Spiner />}
         {searchResults.length > 0 ? (
-          <>
-            <ul className={styles.MoviesGallery}>
-              {searchResults.map((searchResult, index) => (
-                <li key={index}>
-                  <Link
-                    to={{
-                      pathname: `${url}/${searchResult.id}`,
-                      state: {
-                        from: { location, label: `back to movies` },
-                      },
-                    }}
-                    className={styles.link}
-                  >
-                    {searchResult.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            {page !== pages && <Button handleOnClick={handleOnClick} />}
-          </>
+          <MoviesGallery
+            searchResults={searchResults}
+            url={url}
+            location={location}
+            handleOnClick={handleOnClick}
+            page={page}
+            pages={pages}
+          />
         ) : (
           <p>Sorry, nothing was found for your query!</p>
         )}

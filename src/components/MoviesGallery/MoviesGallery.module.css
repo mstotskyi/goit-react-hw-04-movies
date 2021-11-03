@@ -1,10 +1,6 @@
-.link {
-  display: inline-block;
-  text-decoration: none;
-  padding: 5px;
-  font-size: 18px;
-  color: black;
-  font-weight: 600;
+.MovieCard {
+  max-width: 355px;
+  max-height: 525px;
 }
 .MoviesGallery {
   display: grid;
@@ -19,4 +15,13 @@
   margin-right: auto;
   text-align: center;
   margin-bottom: 20px;
+}
+.link {
+  display: inline-block;
+  text-decoration: none;
+  padding: 5px;
+  font-size: 18px;
+  color: black;
+  font-weight: 600;
+  height: 100%;
 }

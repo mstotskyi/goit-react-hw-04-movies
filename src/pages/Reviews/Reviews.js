@@ -12,7 +12,6 @@ export default function Reviews() {
   const [reviews, setReviews] = useState([]);
   const [showSpiner, setShowSpiner] = useState(false);
 
-  console.log(movieId);
   useEffect(() => {
     setShowSpiner(true);
 
@@ -20,7 +19,6 @@ export default function Reviews() {
     newPicsApiService
       .fetchReviewsById()
       .then(result => {
-        console.log(result);
         setReviews(result.results);
         setShowSpiner(false);
       })

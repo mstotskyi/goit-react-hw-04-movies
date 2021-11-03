@@ -17,8 +17,6 @@ export default function MovieDetails() {
 
   const history = useHistory();
   const location = useLocation();
-  console.log(history);
-  console.log(location);
 
   useEffect(() => {
     newPicsApiService.movieId = movieId;
@@ -41,7 +39,7 @@ export default function MovieDetails() {
         onClick={handleOnClick}
         className={styles.GoBackBtn}
       >
-        {location?.state?.from?.label ?? 'Go back'}
+        {location?.state?.from?.label ?? 'Back to results'}
       </button>
       <div className={styles.MovieDetails}>
         {movie.poster_path ? (
@@ -75,7 +73,10 @@ export default function MovieDetails() {
           to={{
             pathname: `${url}/cast`,
             state: {
-              from: { location, label: `back to home` },
+              from: {
+                location: location.state.from.location,
+                label: `Back to results`,
+              },
             },
           }}
           className={styles.link}
@@ -87,7 +88,10 @@ export default function MovieDetails() {
           to={{
             pathname: `${url}/reviews`,
             state: {
-              from: { location, label: `back to home` },
+              from: {
+                location: location.state.from.location,
+                label: `Back to results`,
+              },
             },
           }}
           className={styles.link}
